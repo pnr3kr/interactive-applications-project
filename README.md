@@ -2,15 +2,19 @@
 
 ## Page Architecture Plan
 <img width="547" height="340" alt="image" src="https://github.com/user-attachments/assets/5a062579-78c9-4b98-8309-52b8e847e886" />
+
 This design utilized hierarchy to direct the viewers towards the most relevant information. In this case, the most relevant information is the day's outfit. The weather is placed smaller so that the user has the opportunity to view the weather in case they are skeptical of their given outfit or want added confirmation. This is the home page, with the purpose to provide the daily information on what the outfit for the day should be. The user goal is to only need a quick glance to provide all the information needed to quickly prepare an outfit for the day.
 
 <img width="508" height="343" alt="image" src="https://github.com/user-attachments/assets/f2017dd3-953f-4b59-8bd5-8e448dd20009" />
+
 This page utilizes unity in order to provide a comprehensive view of the information. Since this is meant to provide a weeklong snapshot of outfits and weather, the user goal is to be able to simultaneously comprehend all of the buttons for the week to put the plan together.
 
 <img width="469" height="202" alt="image" src="https://github.com/user-attachments/assets/fecbf8aa-938a-4722-b28d-26b3486e0cc8" />
+
 This page utilizes whitespace to separate visual information. Users need to be able to identify distinct features on this page, white space allows for the clear separation between the calendar feature and the feature to add a new event. Additionally, larger spaces in the calendar allow viewers to comprehensively view an event and understand the day it takes place on. The purpose of this page is for users to add/remove their special events throughout the month that will appear as part of the comprehensive page. The user goal is to provide a quick and easy way to include a space for a calendar, since special events greatly influence what a user's outfit needs to be for the day or occasion.
 
 <img width="597" height="340" alt="image" src="https://github.com/user-attachments/assets/33854941-a306-4709-8490-a75900f64ed3" />
+
 This page utilizes alignment to convey the visualizations. By placing both side by side the user can judge the both of them equally and flexibly decide which chart is more relevant to their purposes. The purpose of this analytics page is for users to understand their own taste and styles gathered over the course of their use, as well as see changes towards the future, such as with the temperature changes in the week or month.
 
 ## Design Justification
