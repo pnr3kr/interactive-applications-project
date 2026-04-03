@@ -67,3 +67,13 @@ with col2:
     fig.update_layout(showlegend=True, margin=dict(t=20, b=20, l=20, r=20))
 
     st.plotly_chart(fig, use_container_width=True)
+
+    st.subheader("Outfit Category Counts")
+
+    # Count column from percentages for now (out of 100 sample outfits)
+    outfit_data["Count"] = outfit_data["Percentage"].astype(int)
+    st.dataframe(
+        outfit_data[["Category", "Count", "Percentage"]].rename(columns={"Percentage": "Percentage (%)"}),
+        use_container_width=True,
+        hide_index=True
+    )
