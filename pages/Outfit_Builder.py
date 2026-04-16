@@ -26,15 +26,29 @@ st.divider()
 # --- Step 1: Shoes ---
 if st.session_state.step == 1:
     st.subheader("👟 Step 1: Select Your Shoe to be removed")
-    shoe_options = [
-        "Sneakers", "Loafers", "Boots", "Sandals",
+    shoe_options = sorted([
+        "Sneakers", "Loafers", "Boots", "Sandals", "Flip-Flops",
         "Heels", "Oxfords", "Slip-ons", "Rain Boots"
-    ]
-    st.session_state.selected_shoes = st.multiselect(
+    ])
+    shoe_category=st.selectbox("Pick a style category:",
+                          options=["All","Formal","Casual","Outdoor"],key='shoe_style_category',on_change=lambda:st.session_state.update({'selected_shoes':[]}))
+    if shoe_category=="Formal":
+        shoes=sorted(["Heels", "Oxfords", "Loafers"])
+    elif shoe_category=="Casual":
+        shoes=sorted(["Flip-Flops","Sneakers", "Sandals", "Slip-ons" ])
+    elif shoe_category=="Outdoor":
+        shoes=sorted(["Boots", "Rain Boots"])
+    else:
+        shoes=shoe_options
+
+    st.multiselect(
         "Choose your shoes:",
-        shoe_options,
-        default=st.session_state.selected_shoes
+        shoes,
+        default=st.session_state.selected_shoes,
+        key='select_shoe'
     )
+    st.session_state.selected_shoes = st.session_state.select_shoe
+    
     if not st.session_state.selected_shoes:
         st.warning("Please select at least one shoe type.")
 
@@ -47,15 +61,30 @@ if st.session_state.step == 1:
 # --- Step 2: Shirts ---
 elif st.session_state.step == 2:
     st.subheader("👕 Step 2: Select Your Shirts to be excluded")
-    shirt_options = [
-        "T-Shirt", "Button-Up", "Polo", "Hoodie",
-        "Tank Top", "Blouse", "Flannel", "Turtleneck"
-    ]
-    st.session_state.selected_shirts = st.multiselect(
+    shirt_options = sorted([
+        "T-Shirt", "Button-Up", "Polo", "Hoodie", "Quarter-Zip Jacket", "Full-Zip Jacket"
+        "Tank Top", "Blouse", "Flannel", "Turtleneck","Crop-Top"
+    ])
+
+    shirt_category=st.selectbox("Pick a style category:",
+                          options=["All","Formal","Casual","Outdoor"],key='shirt_style_category',on_change=lambda:st.session_state.update({'selected_shirts':[]}))
+    if shirt_category=="Formal":
+        shirt=sorted(["Button-Up", "Polo", "Blouse"])
+    elif shirt_category=="Casual":
+        shirt=sorted(["Turtleneck", "Tank Top", "Flannel","T-Shirt","Crop-Top"])
+    elif shirt_category=="Outerwear":
+        shirt=sorted(["Hoodie", "Quarter-Zip Jacket", "Full-Zip Jacket"])
+    else:
+        shirt=shirt_options
+        
+    st.multiselect(
         "Choose your shirts:",
-        shirt_options,
-        default=st.session_state.selected_shirts
+        shirt,
+        default=st.session_state.selected_shirts,
+        key='select_shirt'
     )
+    st.session_state.selected_shirts = st.session_state.select_shirt
+
     if not st.session_state.selected_shirts:
         st.warning("Please select at least one shirt type.")
 
@@ -76,15 +105,30 @@ elif st.session_state.step == 2:
 # --- Step 3: Pants ---
 elif st.session_state.step == 3:
     st.subheader("👖 Step 3: Select Your Pants to be excluded")
-    pants_options = [
+    pants_options = sorted([
         "Jeans", "Chinos", "Sweatpants", "Shorts",
         "Dress Pants", "Leggings", "Cargo Pants", "Joggers"
-    ]
-    st.session_state.selected_pants = st.multiselect(
-        "Choose your pants:",
-        pants_options,
-        default=st.session_state.selected_pants
+    ])
+
+    pant_category=st.selectbox("Pick a style category:",
+                          options=["All","Formal","Casual","Outdoor"],key='pant_style_category',on_change=lambda:st.session_state.update({'selected_pants':[]}))
+    if pant_category=="Formal":
+        pant=sorted(["Dress Pants","Chinos"])
+    elif pant_category=="Casual":
+        pant=sorted(["Jeans","Sweatpants","Shorts","Joggers","Leggings"])
+    elif pant_category=="Outdoor":
+        pant=sorted(["Cargo Pants"])
+    else:
+        pant=pants_options
+
+    st.multiselect(
+        "Choose your shoes:",
+        pant,
+        default=st.session_state.selected_pants,
+        key='select_pant'
     )
+    st.session_state.selected_pants = st.session_state.select_pant
+
     if not st.session_state.selected_pants:
         st.warning("Please select at least one pants type.")
 
