@@ -31,17 +31,20 @@ with col1:
             st.session_state.time=None
         if "all_day" not in st.session_state:
             st.session_state.all_day=True
+        #all_day key allows users to specify if the event is an all-day event or has a specific time. If all_day is True, the time input will be hidden and the event will be treated as an all-day event. If False, the user can specify a time for the event. This provides flexibility for different types of events in the calendar.
         all_day=st.toggle("All Day", key="all_day")
 
         with st.form("event_form", clear_on_submit=False):
+            #key below allows Streamlit to differentiate between different events
             title = st.text_input("Event Title", key="event_title")
+            #key below allows Streamlit to differentiate between different dates for each event
             date = st.date_input("Event Date", key="date")
             if not all_day:
                 event_time=st.time_input("Event Time", key="time")
             else:
                 event_time=None
-
-            submit = st.form_submit_button("Add Event")
+            #key allows Streamlit to identify specific submit events
+            submit = st.form_submit_button("Add Event",key='add_event_btn')
         if submit:
             if title.strip():
                 if all_day:
@@ -66,8 +69,10 @@ with col1:
         if st.session_state.events:
             with st.form("delete_form"):
                 event_options = [f"{e['title']} ({e['display']})" for e in st.session_state.events]
-                event_to_delete = st.multiselect("Select event to remove:", event_options)
-                delete_submit = st.form_submit_button("Delete Selected Event", type="primary")
+                #key prevents widget conflicts with the add event form and when there are no events to delete
+                event_to_delete = st.multiselect("Select event to remove:", event_options,key="event_to_delete")
+                #key allows Streamlit to identify specific delete submitting events
+                delete_submit = st.form_submit_button("Delete Selected Event", key="delete_event_btn", type="primary")
                 if delete_submit:
                     if event_to_delete:
                         st.session_state.events = [e for e in st.session_state.events if f"{e['title']} ({e['display']})" not in event_to_delete]
