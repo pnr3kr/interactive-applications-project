@@ -1,77 +1,86 @@
 import streamlit as st
-import requests
 import plotly.express as px
 import pandas as pd
 
 st.title("Analytics")
-
 st.divider()
 
-# Function to fetch weather data and cache to avoid repeated API calls
-@st.cache_data(ttl=3600)
-def get_historical_weather(lat=38.0293, lon=-78.4767):
-    url = (
-        f"https://api.open-meteo.com/v1/forecast"
-        f"?latitude={lat}&longitude={lon}"
-        f"&daily=temperature_2m_max,weathercode"
-        f"&temperature_unit=fahrenheit"
-        f"&forecast_days=7"
-        f"&past_days=23"
-    )
-    response = requests.get(url)
-    return response.json()
+# Read from session state set in Homepage.py sidebar
+weather_data = st.session_state.get("weather_data", None)
+city_with_state = st.session_state.get("city_with_state", "Charlottesville, VA")
 
-weather_data = get_historical_weather()
+forecast_days = st.slider("Days of history to show", min_value=7, max_value=30, value=14, key="forecast_slider")
+
+if not weather_data:
+    st.warning("No weather data found. Please set your location in the sidebar on the Homepage.")
+    st.stop()
+
+if "error" in weather_data:
+    st.error(weather_data["error"])
+    st.stop()
+
+st.success(f"Weather data loaded for {city_with_state}!")
+
 daily_data = weather_data.get("daily", {})
 dates = daily_data.get("time", [])
 temperatures = daily_data.get("temperature_2m_max", [])
 
+# Filter dates/temperatures to only show the selected number of past days
+if dates and temperatures:
+    today_str = pd.Timestamp.today().strftime("%Y-%m-%d")
+    filtered = [(d, t) for d, t in zip(dates, temperatures) if d <= today_str]
+    filtered = filtered[-forecast_days:]
+    dates = [f[0] for f in filtered]
+    temperatures = [f[1] for f in filtered]
+
 col1, col2 = st.columns(2)
- 
+
 with col1:
-    st.subheader("Average Temperature over last 30 days")
- 
+    st.subheader(f"Max Temperature — Last {forecast_days} Days")
+
     if dates and temperatures:
-        df_weather = pd.DataFrame({"Date": pd.to_datetime(dates), "Max Temperature (°F)": temperatures})
+        df_weather = pd.DataFrame({
+            "Date": pd.to_datetime(dates),
+            "Max Temperature (°F)": temperatures
+        })
         fig_line = px.line(df_weather, x="Date", y="Max Temperature (°F)")
         fig_line.update_layout(
-            xaxis=dict(
-                tickformat="%b %d",
-                nticks=6,
-                tickangle=-30
-            ),
+            xaxis=dict(tickformat="%b %d", nticks=6, tickangle=-30),
             margin=dict(t=20, b=20, l=20, r=20)
         )
         st.plotly_chart(fig_line, use_container_width=True)
     else:
         st.warning("Weather data unavailable.")
- 
+
 with col2:
     st.subheader("Outfit Category Percentage Breakdown")
 
-    # Sample outfit category data and replace with session state data if tracked
-    outfit_data = pd.DataFrame({
-        "Category": ["Light", "Medium", "Heavy", "Event"],
-        "Percentage": [40, 30, 13, 17]
-    })
+    outfit_log = st.session_state.get("outfit_log", {})
 
-    fig = px.pie(
-        outfit_data,
-        names="Category",
-        values="Percentage",
-        color_discrete_sequence=px.colors.qualitative.Set2
-    )
-    fig.update_traces(textinfo="percent+label")
-    fig.update_layout(showlegend=True, margin=dict(t=20, b=20, l=20, r=20))
+    if outfit_log:
+        category_counts = pd.Series(list(outfit_log.values())).value_counts().reset_index()
+        category_counts.columns = ["Category", "Count"]
+        total = category_counts["Count"].sum()
+        category_counts["Percentage"] = (category_counts["Count"] / total * 100).round(1)
+        outfit_data = category_counts
+    else:
+        st.info("No outfit data yet. Visit the Planner to log outfits!")
+        outfit_data = None
 
-    st.plotly_chart(fig, use_container_width=True)
+    if outfit_data is not None:
+        fig = px.pie(
+            outfit_data,
+            names="Category",
+            values="Percentage",
+            color_discrete_sequence=px.colors.qualitative.Set2
+        )
+        fig.update_traces(textinfo="percent+label")
+        fig.update_layout(showlegend=True, margin=dict(t=20, b=20, l=20, r=20))
+        st.plotly_chart(fig, use_container_width=True)
 
-    st.subheader("Outfit Category Counts")
-
-    # Count column from percentages for now (out of 100 sample outfits)
-    outfit_data["Count"] = outfit_data["Percentage"].astype(int)
-    st.dataframe(
-        outfit_data[["Category", "Count", "Percentage"]].rename(columns={"Percentage": "Percentage (%)"}),
-        use_container_width=True,
-        hide_index=True
-    )
+        st.subheader("Outfit Category Counts")
+        st.dataframe(
+            outfit_data[["Category", "Count", "Percentage"]].rename(columns={"Percentage": "Percentage (%)"}),
+            use_container_width=True,
+            hide_index=True
+        )
