@@ -270,7 +270,7 @@ if user_input is not None:
         system_prompt = build_system_prompt(weather_summary)
 
         model = genai.GenerativeModel(
-            model_name="gemini-2.0-flash",
+            model_name="gemini-1.5-flash-latest",
             system_instruction=system_prompt,
         )
 
